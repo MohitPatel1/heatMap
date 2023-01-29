@@ -61,10 +61,12 @@ const plottGraph = (dataSet) => {
 
   console.log(minTemp,maxTemp)
   const diff=(maxTemp-minTemp)/11;
-
-    const colorsArray = ['#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026'];
-
-    const color = d3.scaleThreshold().domain(d3.range(minTemp,maxTemp,diff)).range(colorsArray)
+  
+  const colorsArray = ['#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026'];
+  
+  const color = d3.scaleThreshold().domain(d3.range(minTemp,maxTemp,diff)).range(colorsArray)
+  
+  const tooltip = document.getElementById('tooltip')
 
       graph.selectAll("rect")
       .data(data)
@@ -78,7 +80,18 @@ const plottGraph = (dataSet) => {
       .attr("y",(d)=>yScale(d.month))
       .attr("width", barWidth)
      .attr("height", barHeight)
-     .style("fill", d => color(d.variance)
-)
+     .style("fill", d => color(d.variance))
+    .on('mouseover',(i,d)=>{
+        tooltip.classList.add('show')
+        tooltip.setAttribute('data-year',d.year)
+        tooltip.style.left=(i.x+15+"px")
+        tooltip.style.top=(i.y+15+"px")
+        tooltip.innerHTML=(`${d.year} ${d.month}<br>${d.variance}`)
+    })
+    .on('mouseout',()=> {
+        tooltip.classList.remove('show')
+    })
+
+    
 
 }

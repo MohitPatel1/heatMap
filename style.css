@@ -5,3 +5,13 @@ body{
 text{
     font-size: 15px;
 }
+
+#tooltip{
+    display: none;
+    position: absolute;
+    background-color: rgba(91, 161, 20, 0.371);
+}
+
+#tooltip.show{
+    display: block;
+}
