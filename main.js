@@ -32,8 +32,6 @@ const plottGraph = (dataSet) => {
 
     const xScale = d3.scaleBand().domain(data.map((d)=>d.year)).range([paddingMore,width-paddingLess])
     const xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d")).tickValues(xScale.domain().filter((d)=>d%20===0))
-    // const xScale=d3.scaleLinear().domain([minX-1,maxX+1]).range([paddingMore,width-paddingLess])
-    // const xAxis=d3.axisBottom(xScale).tickFormat(d3.format("d")).tickSize(10,1);
 
     graph.append('g')
     .call(xAxis)
@@ -58,11 +56,9 @@ const plottGraph = (dataSet) => {
 
     const minTemp = d3.min(data,d=>(d.variance))
     const maxTemp = d3.max(data,d=>(d.variance))
-
-  console.log(minTemp,maxTemp)
   const diff=(maxTemp-minTemp)/11;
   
-  const colorsArray = ['#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026'];
+  const colorsArray = ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026', '#000000'];
   
   const color = d3.scaleThreshold().domain(d3.range(minTemp,maxTemp,diff)).range(colorsArray)
   
@@ -92,6 +88,22 @@ const plottGraph = (dataSet) => {
         tooltip.classList.remove('show')
     })
 
-    
+    const legend = graph.append('g')
+                    .attr('class','legend')
+                    .attr('id','legend')
+                    .attr('transform',`translate(${paddingMore},${height-paddingMore})`)
+
+    const legendRect = legend.selectAll('rect').data(colorsArray)
+    .enter()
+    .append('rect')
+    .attr('width',15)
+    .attr('height',15)
+    .attr('x',(d,i)=>i*20+20)
+    .attr('y',25)
+    .attr('fill',(d,i)=>colorsArray[i])
+
+    legend.append('text').text('low to high')
+    .attr('x',60)
+    .attr('y',60)
 
 }
