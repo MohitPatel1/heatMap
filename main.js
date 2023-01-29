@@ -11,9 +11,9 @@ getData(url);
 
 const plottGraph = (dataSet) => {
     const data = dataSet.monthlyVariance
-    const width = 1200
+    const width = 1300
     const height = 700
-    const padding = 40
+    const padding = 20
     // console.log((width - padding) / (data.length / 12))
     console.log(data)
     
@@ -22,49 +22,36 @@ const plottGraph = (dataSet) => {
     
     const minX = d3.min(data,d=>data.year)
     const maxX = d3.max(data,d=>data.year)
-    // const minY = 0
-    // const maxY = 11
-
-    
-    // const xScale = d3.scaleTime().range([padding,width-padding]).domain([minX-1,maxX+1])
-    const xScale = d3.scaleBand().domain(data.map((d)=>d.year)).range([0,width-padding])
-
-
-    // const yScale = d3.scaleLinear().range([padding,height]).domain([minY,maxY])
-    // const yScale = d3.scaleLinear().range([padding,height]).domain([0,1,2,3,4,5,6,7,8,9,10,11])
-    
-    const xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d")).tickValues(xScale.domain().filter((d)=>d%10===0))
-    
-    // const yAxis = d3.axisLeft(yScale)
-    
+  
     const graph = d3.select("#heatmap")
     .attr('height',height)
     .attr('width',width)
-    .attr('transform','translate(50,0)')
+    .attr('transform','translate(0,0)')
+
+    const xScale = d3.scaleBand().domain(data.map((d)=>d.year)).range([0,width-4*padding])
+    const xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d")).tickValues(xScale.domain().filter((d)=>d%10===0))
 
     graph.append('g')
     .call(xAxis)
-    .attr('transform',`translate(0,${height - padding})`)
+    .attr('transform',`translate(${5*padding},${height - padding})`)
     .attr('id','x-axis')
-    
-    // graph.append('g')
-    // .call(yAxis)
-    // .attr('transform',`translate(${padding},0)`)
-    // .attr('id','y-axis')
 
-    // graph.append("g")
-    // .attr("transform",`translate(0,${height-padding})`)
-    // .call(xAxis)
-    // .attr("id","x-axis")
-    // .append("text")
-    // .text("Years")
-    // .style("text-anchor","middle")
-    // .attr("transform",`translate(${xScale(width/2)},30)`);
+    const yScale = d3.scaleBand().range([0,height]).domain([0,1,2,3,4,5,6,7,8,9,10,11]).padding(0)
+    const yAxis = d3.axisLeft(yScale).tickValues(yScale.domain()).tickFormat( (month)=> {
+        var date = new Date(0);
+        date.setUTCMonth(month);
+        var format = d3.timeFormat('%B');
+        return format(date);
+      })
+      .tickSize(10, 1);
+        
+    graph.append('g')
+    .call(yAxis)
+    .attr('transform',`translate(${5*padding},${-padding})`)
+    .attr('id','y-axis')
+   
 
-    
-
-
-    const bar = graph.selectAll('rect')
+     const bar = graph.selectAll('rect')
     .data(data)
     .enter()
     .append('rect')
@@ -77,6 +64,7 @@ const plottGraph = (dataSet) => {
     .attr('data-year',d=>d.year)
     .attr('data-month',d=>d.month-1)
     .attr('data-temp',d=>d.variance)
+    .attr('transform',`translate(${5*padding},0)`)
 
 
 
