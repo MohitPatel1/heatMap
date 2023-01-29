@@ -10,11 +10,12 @@ const getData = async (url) => {
 getData(url);
 
 const plottGraph = (dataSet) => {
+    console.log(dataSet)
     const data = dataSet.monthlyVariance
     const width = 1300
     const height = 700
     const padding = 20
-    // console.log((width - padding) / (data.length / 12))
+    const baseTemprature = dataSet.baseTemprature
     console.log(data)
     
     const barHeight = (height - padding) / 12;
@@ -50,8 +51,16 @@ const plottGraph = (dataSet) => {
     .attr('transform',`translate(${5*padding},${-padding})`)
     .attr('id','y-axis')
    
+    // colours
 
-     const bar = graph.selectAll('rect')
+    const minTemp = d3.min(data,d=>(d.variance))
+    const maxTemp = d3.max(data,d=>(d.variance))
+
+    const colorsArray = ['#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026', '#000000'];
+
+    const color = d3.scaleThreshold().domain(d3.range(minTemp,maxTemp)).range(colorsArray)
+
+    const bar = graph.selectAll('rect')
     .data(data)
     .enter()
     .append('rect')
@@ -60,11 +69,11 @@ const plottGraph = (dataSet) => {
     .attr('class','cell')
     .attr('x',(d,i)=>(Math.floor(i/12))*barWidth)
     .attr('y',(d,i)=>(i%12)*barHeight)
-    .attr('fill','green')
     .attr('data-year',d=>d.year)
     .attr('data-month',d=>d.month-1)
     .attr('data-temp',d=>d.variance)
     .attr('transform',`translate(${5*padding},0)`)
+    .attr('fill',d=>color(d.variance))
 
 
 
